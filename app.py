@@ -4,6 +4,7 @@ import random
 from utils.weather import get_weather
 from ml.inference.predict import predict_delay
 import datetime
+from utils.route import get_route
 
 st.set_page_config(page_title="Supply Chain Risk Dashboard", layout="centered")
 
@@ -40,14 +41,19 @@ if st.button("🔍 Analyze Risk"):
     with st.spinner("Fetching data & analyzing risk..."):
 
         # 🌦️ Weather API
-        weather, temp = get_weather(destination)
+        weather, temp, dest_lat, dest_lon = get_weather(destination)
+        _, _, src_lat, src_lon = get_weather(source)
+
+        # 🗺️ Route
+        route = None
+        if src_lat and dest_lat:
+            route = get_route([src_lon, src_lat], [dest_lon, dest_lat])
 
         # ⏰ Current hour
         hour = datetime.datetime.now().hour
 
         # 🤖 ML Prediction
         result = predict_delay(weather.lower(), traffic, temp, hour)
-        st.write("🧠 Model Base Probability:", round(result["delay_probability"], 2))
 
     st.divider()
 
@@ -62,16 +68,32 @@ if st.button("🔍 Analyze Risk"):
     col2.metric("🌡️ Temp (°C)", round(temp, 2))
     col3.metric("⚠️ Risk Score", result["risk_score"])
 
-    # 🔥 Progress Bar
     st.progress(result["risk_score"] / 100)
 
-    # 🚦 Risk Level Display
+    st.write("🧠 Model Base Probability:", round(result["delay_probability"], 2))
+
     if result["risk_score"] < 30:
         st.success("🟢 Low Risk - Shipment likely on time")
     elif result["risk_score"] < 70:
         st.warning("🟡 Medium Risk - Possible minor delay")
     else:
         st.error("🔴 High Risk - Delay expected!")
+
+    # -------------------------------
+    # 🗺️ Route Info
+    # -------------------------------
+    if route:
+        distance, duration = route
+
+        st.subheader("🗺️ Route Information")
+
+        col1, col2 = st.columns(2)
+
+        col1.metric("📏 Distance (km)", round(distance, 2))
+        col2.metric("⏱️ Duration (min)", round(duration, 2))
+
+    else:
+        st.warning("⚠️ Route data unavailable")
 
     # -------------------------------
     # 📌 Contributing Factors
@@ -83,10 +105,10 @@ if st.button("🔍 Analyze Risk"):
     st.write(f"- ⏰ Time of day: **{hour}:00 hrs**")
 
     # -------------------------------
-    # 🚨 Smart Alert
+    # 🚨 Alert
     # -------------------------------
     if result["risk_score"] > 70:
-        st.error("⚠️ Alert: Shipment may be delayed by ~2–3 hours")
+        st.error("⚠️ Shipment may be delayed by ~2–3 hours")
 
     # -------------------------------
     # 🧭 Decision Layer
@@ -96,16 +118,15 @@ if st.button("🔍 Analyze Risk"):
     if result["risk_score"] < 30:
         st.success("✅ Safe to proceed with shipment")
     elif result["risk_score"] < 70:
-        st.warning("⚠️ Moderate risk — monitor conditions or add buffer time")
+        st.warning("⚠️ Moderate risk — monitor conditions")
     else:
-        st.error("🚨 High risk — consider delaying or rerouting shipment")
+        st.error("🚨 Consider delaying or rerouting")
 
     # -------------------------------
-    # 📈 Risk Trend Graph
+    # 📈 Risk Trend
     # -------------------------------
     st.subheader("📈 Risk Trend")
 
-    # Simulated past values
     past_risks = [random.randint(20, 60) for _ in range(3)]
     risk_history = past_risks + [result["risk_score"]]
 

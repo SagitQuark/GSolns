@@ -18,15 +18,17 @@ def get_weather(city):
         response = requests.get(url, params=params)
         
         if response.status_code != 200:
-            return "Clear", 25
+            return "Clear", 25, None, None  
         
         data = response.json()
         
         weather = data['weather'][0]['main']
         temp = data['main']['temp']
+        lat = data['coord']['lat']
+        lon = data['coord']['lon']
         
-        return weather, temp
+        return weather, temp, lat, lon
     
-    except:
-        return "Clear", 25
-    
+    except Exception as e:
+        print("Weather API Error:", e)
+        return "Clear", 25, None, None  
