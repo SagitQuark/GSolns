@@ -1,0 +1,9 @@
+weather,traffic,temp,hour,delay
+clear,high,288.28,9,0
+clear,medium,289.15,10,0
+rain,medium,289.26,11,0
+rain,high,289.36,12,1
+snow,medium,289.58,13,1
+clear,medium,290.13,14,0
+rain,medium,290.45,15,0
+clear,low,290.67,16,0
