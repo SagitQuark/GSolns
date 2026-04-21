@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 import random
 from utils.weather import get_weather
 from ml.inference.predict import predict_delay
-import datetime
 from utils.route import get_route
+import datetime
+import pandas as pd
 
 st.set_page_config(page_title="Supply Chain Risk Dashboard", layout="centered")
 
@@ -44,9 +45,9 @@ if st.button("🔍 Analyze Risk"):
         weather, temp, dest_lat, dest_lon = get_weather(destination)
         _, _, src_lat, src_lon = get_weather(source)
 
-        # 🗺️ Route
+        # 🗺️ Route (distance + duration only)
         route = None
-        if src_lat and dest_lat:
+        if src_lat is not None and dest_lat is not None:
             route = get_route([src_lon, src_lat], [dest_lon, dest_lat])
 
         # ⏰ Current hour
@@ -56,6 +57,21 @@ if st.button("🔍 Analyze Risk"):
         result = predict_delay(weather.lower(), traffic, temp, hour)
 
     st.divider()
+
+    # -------------------------------
+    # 🗺️ Map (ONLY points)
+    # -------------------------------
+    if src_lat is not None and dest_lat is not None:
+        st.subheader("🗺️ Route Map")
+
+        map_data = pd.DataFrame({
+            "lat": [src_lat, dest_lat],
+            "lon": [src_lon, dest_lon]
+        })
+
+        st.map(map_data)
+    else:
+        st.warning("⚠️ Map unavailable (invalid locations)")
 
     # -------------------------------
     # 📊 Risk Analysis
@@ -91,7 +107,6 @@ if st.button("🔍 Analyze Risk"):
 
         col1.metric("📏 Distance (km)", round(distance, 2))
         col2.metric("⏱️ Duration (min)", round(duration, 2))
-
     else:
         st.warning("⚠️ Route data unavailable")
 

@@ -1,11 +1,12 @@
+from dotenv import load_dotenv
+import requests
+import os
+
+load_dotenv()
+API_KEY = os.getenv("ROUTE_API_KEY")
+
+
 def get_route(start, end):
-    import requests
-    import os
-    from dotenv import load_dotenv
-
-    load_dotenv()
-    API_KEY = os.getenv("ROUTE_API_KEY")
-
     url = "https://api.openrouteservice.org/v2/directions/driving-car"
 
     headers = {
@@ -20,23 +21,20 @@ def get_route(start, end):
     try:
         response = requests.post(url, json=body, headers=headers)
 
-        data = response.json()
-
-        if "features" not in data:
+        if response.status_code != 200:
+            print("❌ Route API Error:", response.text)
             return None
 
-        route_data = data["features"][0]
+        data = response.json()
 
-        # ✅ get route line
-        coordinates = route_data["geometry"]["coordinates"]
+        # ✅ NEW FORMAT
+        route = data["routes"][0]["summary"]
 
-        # ✅ get distance/time
-        segment = route_data["properties"]["segments"][0]
-        distance_km = segment["distance"] / 1000
-        duration_min = segment["duration"] / 60
+        distance_km = route["distance"] / 1000
+        duration_min = route["duration"] / 60
 
-        return coordinates, distance_km, duration_min
+        return distance_km, duration_min
 
     except Exception as e:
-        print("Route error:", e)
+        print("❌ Exception in route:", e)
         return None
