@@ -1,0 +1,255 @@
+:root {
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #161616;
+  --bg-tertiary: #1E1E1E;
+  --text-primary: #FFFFFF;
+  --text-secondary: #888888;
+  --gold-accent: #D4AF37;
+  --success: #32CD32;
+  --warning: #FFD700;
+  --danger: #FF4500;
+  --font-serif: "Georgia", "Playfair Display", serif;
+  --font-sans: "Inter", "Roboto", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  margin: 0;
+}
+
+.gold-text {
+  color: var(--gold-accent);
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid #333;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background-color: rgba(212, 175, 55, 0.1);
+  color: var(--gold-accent);
+}
+
+.main-content {
+  flex: 1;
+  padding: 3rem;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.metric-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid #333;
+  padding: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-title {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--gold-accent);
+}
+
+.metric-delta {
+  font-size: 0.9rem;
+}
+
+.metric-delta.positive {
+  color: var(--success);
+}
+
+.metric-delta.negative {
+  color: var(--danger);
+}
+
+.metric-delta.neutral {
+  color: var(--text-secondary);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: var(--bg-secondary);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+th {
+  color: var(--text-secondary);
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.badge.low {
+  background-color: rgba(50, 205, 50, 0.2);
+  color: var(--success);
+}
+
+.badge.medium {
+  background-color: rgba(255, 215, 0, 0.2);
+  color: var(--warning);
+}
+
+.badge.high {
+  background-color: rgba(255, 69, 0, 0.2);
+  color: var(--danger);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+input,
+select {
+  background-color: var(--bg-tertiary);
+  border: 1px solid #333;
+  color: var(--text-primary);
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--gold-accent);
+}
+
+.btn {
+  background-color: var(--gold-accent);
+  color: var(--bg-primary);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.alert-danger {
+  background-color: rgba(255, 69, 0, 0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+.alert-success {
+  background-color: rgba(50, 205, 50, 0.1);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+.alert-warning {
+  background-color: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--warning);
+  color: var(--warning);
+}
