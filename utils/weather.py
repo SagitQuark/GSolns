@@ -3,7 +3,7 @@ import requests
 import os
 
 load_dotenv()
-API_KEY = os.getenv("Weather_API_KEY")
+API_KEY = os.getenv("VITE_OPENWEATHER_API_KEY")
 
 def get_weather(city):
     url = "https://api.openweathermap.org/data/2.5/weather"
@@ -15,7 +15,7 @@ def get_weather(city):
     }
     
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, timeout=3)
         
         if response.status_code != 200:
             return "Clear", 25, None, None  
