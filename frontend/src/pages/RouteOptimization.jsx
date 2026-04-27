@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { MapContainer, TileLayer, Polyline, Marker } from 'react-leaflet';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = process.env.VITE_API_BASE || 'http://localhost:8000';
 
 const RouteOptimization = () => {
   const [source, setSource] = useState('Delhi');
