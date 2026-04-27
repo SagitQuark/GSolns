@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { AlertTriangle } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = process.env.VITE_API_BASE || 'http://localhost:8000';
 
 const Portfolio = () => {
   const [data, setData] = useState(null);

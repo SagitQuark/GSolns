@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ScatterChart, Scatter, ZAxis } from 'recharts';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = process.env.VITE_API_BASE || 'http://localhost:8000';
 
 const Analytics = () => {
   const [data, setData] = useState(null);
