@@ -245,7 +245,24 @@ const RouteOptimization = () => {
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 'bold' }}>{r.name}</span>
+                        <div>
+                          <span style={{ fontWeight: 'bold' }}>{r.name}</span>
+                          {r.route_type && (
+                            <span style={{
+                              marginLeft: '0.5rem',
+                              fontSize: '0.7rem',
+                              padding: '0.15rem 0.5rem',
+                              borderRadius: '10px',
+                              backgroundColor: r.route_type === 'Express Highway' ? 'rgba(255,68,68,0.15)' : r.route_type === 'National Highway' ? 'rgba(255,215,0,0.15)' : 'rgba(80,200,120,0.15)',
+                              color: r.route_type === 'Express Highway' ? 'var(--danger)' : r.route_type === 'National Highway' ? 'var(--warning)' : 'var(--success)',
+                              border: `1px solid ${r.route_type === 'Express Highway' ? 'var(--danger)' : r.route_type === 'National Highway' ? 'var(--warning)' : 'var(--success)'}`,
+                              fontWeight: 'bold',
+                              letterSpacing: '0.5px'
+                            }}>
+                              {r.route_type}
+                            </span>
+                          )}
+                        </div>
                         {r.name === result.best_route.name && <span className="gold-text" style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>← BEST</span>}
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', fontSize: '0.9rem', color: '#888' }}>
