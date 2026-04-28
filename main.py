@@ -267,26 +267,43 @@ def optimize_route(req: OptimizeRequest):
             "temp": temp
         })
     
+    # Route-specific risk profiles: each route has different tradeoffs
+    # Route 1 = fastest highway (busy, higher accident/congestion risk)
+    # Route 2 = national highway (balanced, moderate risk)
+    # Route 3 = rural/alternate (slowest, but lowest congestion risk)
+    ROUTE_PROFILES = [
+        {"traffic_override": "high",   "risk_multiplier": 1.5,  "label": "Express Highway"},
+        {"traffic_override": req.traffic, "risk_multiplier": 1.0, "label": "National Highway"},
+        {"traffic_override": "low",    "risk_multiplier": 0.6,  "label": "Alternate Route"},
+    ]
+
     results = []
-    for r in routes:
-        risk = predict_delay(r["weather"], r["traffic"], temp, hour)
+    for i, r in enumerate(routes):
+        profile = ROUTE_PROFILES[i] if i < len(ROUTE_PROFILES) else ROUTE_PROFILES[-1]
+        
+        # Use route-specific traffic override for risk calculation
+        risk = predict_delay(r["weather"], profile["traffic_override"], temp, hour)
         base_risk_score = risk["risk_score"]
+
+        # Apply route-specific risk multiplier
         duration_factor = (r["duration"] - routes[0]["duration"]) / 100.0
-        
-        # Adaptive Risk Weighting
+        adjusted_risk_score = min(99, max(5, int(base_risk_score * profile["risk_multiplier"] * (1 + duration_factor))))
+
+        # Adaptive penalty for high-traffic routes only
         adaptive_penalty = 0
-        if ml_state["consecutive_high_traffic"] > 1 and r["traffic"] == "high":
-            adaptive_penalty = 12 # Model learned that high traffic is currently severe
-            
-        adjusted_risk_score = min(99, max(5, int(base_risk_score * (1 + duration_factor) + adaptive_penalty)))
-        
+        if ml_state["consecutive_high_traffic"] > 1 and profile["traffic_override"] == "high":
+            adaptive_penalty = 12
+            adjusted_risk_score = min(99, adjusted_risk_score + adaptive_penalty)
+
         score = r["duration"] + (req.lambda_value * adjusted_risk_score)
         r["risk_score"] = adjusted_risk_score
         r["total_score"] = score
-        r["factors"] = explain_risk(r["weather"], r["traffic"], hour, r["distance"])
+        r["route_type"] = profile["label"]
+        # Pass route-specific traffic to explain_risk so factors reflect the route character
+        r["factors"] = explain_risk(r["weather"], profile["traffic_override"], hour, r["distance"])
         if adaptive_penalty > 0:
             r["factors"].append("Adaptive AI Penalty: historical traffic trend")
-            
+
         results.append(r)
         
     best_route = min(results, key=lambda x: x["total_score"])
